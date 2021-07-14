@@ -220,7 +220,12 @@ def quiz_detail_passing(request, **kwargs):
             )
         # breakpoint()
 
-        question = models.Question.objects.get(title=data).values('correct1', 'correct2', 'correct3', 'correct4')
+        question = models.Question.objects.get(title=data).values(
+            'correct1', 
+            'correct2', 
+            'correct3', 
+            'correct4'
+        )
         if answers == question:
             return True
         if formset.is_valid():
