@@ -1,0 +1,21 @@
+
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+  <h2 style="color: red; left: 100%">{{ message }}</h2>
+{% endfor %}
+{% endif %}
+	<h3>регистрация</h3>
+<form method="post">
+	{% csrf_token %}
+	{{ form.username.label }}
+	{{ form.username|safe }}
+	{{ form.password1.label }}
+	{{ form.password1 }}
+	{{ form.password2.label }}
+	{{ form.password2 }}
+<input type="submit" value="register">
+</form>
+
+
+{% endblock %}

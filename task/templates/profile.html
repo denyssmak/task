@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if request.user.is_authenticated %}
+<br>
+Avatar: <img src="{{user.profiles.photo}}" width="90px" height="90px"><br>
+<br>
+Info: {{user.profiles}}
+	<h2>{{ user }}</h2>
+
+	<a href="{% url 'logout_page' %}">logout</a><br>
+	<a href="{% url 'profile_update'  user.username  %}">Update profile</a>
+{% endif %}
+{% endblock %}

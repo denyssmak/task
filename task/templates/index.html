@@ -1,0 +1,26 @@
+{% block content %}
+{% load static %}
+{% load socialaccount %}
+{% load account %}
+
+{% if user.is_authenticated %}
+{{user}}
+<br>
+<a href="{% url 'profile' user.username %}">Profile</a><br>
+<a href="{% url 'logout_page' %}">Logout</a>
+<br>
+<a href="{% url 'createtest' %}">create test</a>
+{% else %}
+<a href="{% url 'login_page' %}">Login</a>
+<br>
+<a href="{% provider_login_url 'github' %}">Login github</a>
+<br>
+</a>
+<br>
+<a href="{% url 'register_page' %}">Register</a>
+<br>
+{% endif %}
+<br>
+<a href="{% url 'test_all' %}">Tests</a>
+
+{% endblock %}

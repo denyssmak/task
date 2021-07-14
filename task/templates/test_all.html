@@ -1,0 +1,19 @@
+{% block content %}
+<form action="{% url 'search_results' %}" method="get">
+  <input name="q" type="text" placeholder="Search...">
+  <input type="submit" value="OK">
+<input type="hidden" value="hidden">
+</form>
+{% for ordering_data in ordering_data %}
+<form method="get">
+  <div>{{ordering_data}} Cортировка по дате
+<input type="submit" value="OK">
+<input type="hidden" value="hidden">
+{% endfor %}
+{% for test in test %}
+  <br>
+  <a href="{% url 'test' test.title %}">{{test.title}}</a>
+{% endfor %}
+</form>
+</div>
+{% endblock %}

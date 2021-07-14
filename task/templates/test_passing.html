@@ -1,0 +1,18 @@
+{% block content %}
+    <h1>{{quiz.title}}<br></h1>
+    <h4>{{quiz.description}}<br></h4>
+    <form method="post">
+    {% csrf_token %}
+
+
+    {% for field in formset %}
+    {{ quiz.question_set.all }}
+        {{ quiz.question_set.all.forloop.counter.title_anwers }}<br>
+        {{ quiz.question_set.all.forloop.counter.response1 }} {{ field.correct1 }}
+        {{ quiz.question_set.all.forloop.counter.response2 }} {{ field.correct2 }}
+        {{ quiz.question_set.all.forloop.counter.response3 }} {{ field.correct3 }}
+        {{ quiz.question_set.all.forloop.counter.response4 }} {{ field.correct4 }}<br>
+    {% endfor %}
+    <button type="submit">Сomplete</button>
+    <form>
+{% endblock %}

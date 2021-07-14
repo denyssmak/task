@@ -1,0 +1,9 @@
+{% block content %}
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form}}<br>
+    {{formsets}}
+    {{formset}}
+    <input type="submit" value="Create">
+    </form>
+{% endblock %}

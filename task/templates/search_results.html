@@ -1,0 +1,12 @@
+{% block content %}
+<form action="{% url 'search_results' %}" method="get">
+  <input name="q" type="text" placeholder="Search...">
+  <input type="submit" value="OK">
+<input type="hidden" value="hidden">
+</form>
+
+{% for test in test %}
+  <br>
+  <a href="{% url 'test' test.title %}">{{test.title}}</a>
+{% endfor %}
+{% endblock %}

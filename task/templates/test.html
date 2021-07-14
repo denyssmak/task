@@ -1,0 +1,11 @@
+{% block content %}
+    <h1>{{quiz.title}}<br></h1>
+    <h4>{{quiz.description}}<br></h4>
+    <h3>Тест можно пройти только 1 раз</h3>
+<button><a href="{% url 'comment_create' quiz.pk %}">Написать коментарий</a></button><br>
+
+{% for com in quiz.comment_quiz.all %}
+	{{com.user}} , {{com.content}}<br> 
+{% endfor %}
+<a href="{% url 'test_passing' quiz.title %}">Пройти тест</a>
+{% endblock %}
