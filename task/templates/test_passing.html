@@ -1,4 +1,5 @@
 {% block content %}
+{% load quiz_passing %}
     <h1>{{quiz.title}}<br></h1>
     <h4>{{quiz.description}}<br></h4>
     <form method="post">
@@ -6,12 +7,13 @@
 
 
     {% for field in formset %}
-    {{ quiz.question_set.all }}
-        {{ quiz.question_set.all.forloop.counter.title_anwers }}<br>
-        {{ quiz.question_set.all.forloop.counter.response1 }} {{ field.correct1 }}
-        {{ quiz.question_set.all.forloop.counter.response2 }} {{ field.correct2 }}
-        {{ quiz.question_set.all.forloop.counter.response3 }} {{ field.correct3 }}
-        {{ quiz.question_set.all.forloop.counter.response4 }} {{ field.correct4 }}<br>
+        {% with quiz.question_set.all|index:forloop.counter0 as quizzes %}
+            {{ quizzes.title_anwers }}<br>
+            {{ quizzes.response1 }} {{ field.correct1 }}
+            {{ quizzes.response2 }} {{ field.correct2 }}
+            {{ quizzes.response3 }} {{ field.correct3 }}
+            {{ quizzes.response4 }} {{ field.correct4 }}<br>
+        {% endwith %}
     {% endfor %}
     <button type="submit">Сomplete</button>
     <form>

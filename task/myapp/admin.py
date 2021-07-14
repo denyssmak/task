@@ -32,6 +32,8 @@ class QuizTakersAdmin(admin.ModelAdmin):
     admin.site.register(Question)
     admin.site.register(Response)
 
+
 admin.site.register(MyUser, UserAdmin)
 admin.site.register(UserProfile)
 admin.site.register(Answer)
+admin.site.register(QuizTakers)

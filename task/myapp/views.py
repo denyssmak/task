@@ -19,6 +19,8 @@ from django.db.models import Avg, Q
 from django.forms.models import inlineformset_factory
 from django.forms import formset_factory
 import operator
+from django.contrib.auth.decorators import login_required
+
 
 class UserLoginView(LoginView):
     template_name = 'login.html'
@@ -194,45 +196,54 @@ class ListTestDetailView(DetailView):
 #         can_delete=False,
 # )
 
-
+@login_required
 def quiz_detail_passing(request, **kwargs):
-    slug_field = kwargs["title"]
-    data = get_object_or_404(Quiz, title=slug_field)
-    questions = data.question_set.all()
+    slug_field = kwargs["quiz__title"]
+    quiz = get_object_or_404(Quiz, title=slug_field)
+    questions = quiz.question_set.all()
     if request.method == 'POST':
-        # formset = AnswerFormSet(request.POST, request.FIELDS)
+        formset = AnswerFormSet(request.POST)
         
         answers = []
+        score = 0
         for i in range(5):
-            one_correct = request.POST.get(f'form-{i}-correct1')
-            two_correct = request.POST.get(f'form-{i}-correct2')
-            three_correct = request.POST.get(f'form-{i}-correct3')
-            four_correct = request.POST.get(f'form-{i}-correct4')
-            my_one_correct = request.POST.get(f'form-{i}-correct1')
+            one_correct = bool(request.POST.get(f'form-{i}-correct1'))
+            two_correct = bool(request.POST.get(f'form-{i}-correct2'))
+            three_correct = bool(request.POST.get(f'form-{i}-correct3'))
+            four_correct = bool(request.POST.get(f'form-{i}-correct4'))
             answers.append(
                 Answer(
                     question=questions[i],
-                    correct1=bool(one_correct), 
-                    correct2=bool(two_correct),  
-                    correct3=bool(three_correct),
-                    correct4=bool(four_correct) 
+                    correct1=one_correct, 
+                    correct2=two_correct,  
+                    correct3=three_correct,
+                    correct4=four_correct, 
                 )
             )
+            if questions[i].correct1 == one_correct \
+            and questions[i].correct2 == two_correct \
+            and questions[i].correct3 == three_correct \
+            and questions[i].correct4 == four_correct:
+                score += 1
+        models.QuizTakers.objects.create(
+            user=request.user,
+            quiz=quiz,
+            correct_answers=score,
+        )
+
+        models.Answer.objects.bulk_create(answers)
+        return redirect(reverse('result', args=(slug_field, )))
         # breakpoint()
 
-        question = models.Question.objects.get(title=data).values(
-            'correct1', 
-            'correct2', 
-            'correct3', 
-            'correct4'
-        )
-        if answers == question:
-            return True
-        if formset.is_valid():
-            pass
+        # question = models.Question.objects.get(title=data)
+
+        # if question.correct1 and question.correct2 and question.correct3 and question.correct4 is True:
+        #     return True
+        # else: 
+        #     return False
     else:
         formset = AnswerFormSet()
-    return render(request, "test_passing.html", {"quiz": data, 'formset':formset})
+    return render(request, "test_passing.html", {"quiz": quiz, 'formset':formset})
 
 
 
@@ -302,15 +313,16 @@ class SearchResultsView(ListView):
     def get_queryset(self):
         query = self.request.GET.get('q')
         object_list = Quiz.objects.filter(
-            Q(title__icontains=query)
+            title__icontains=query
         )
         return object_list
 
+
 class ResultQuiz(DetailView):
-    model = Quiz
+    model = QuizTakers
     template_name = 'result.html'
-    slug_url_kwarg = 'title'
-    slug_field = 'title'
+    slug_url_kwarg = 'quiz__title'
+    slug_field = 'quiz__title'
 
 
 # def quiz_detail_passing(request, **kwargs):

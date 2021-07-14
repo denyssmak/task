@@ -91,8 +91,6 @@ class QuizTakers(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     correct_answers = models.IntegerField(default=0)
-    completed = models.BooleanField(default=False)
-
 
     def __str__(self):
         return self.user.username
