@@ -89,8 +89,9 @@ class Answer(models.Model):
 
 class QuizTakers(models.Model):
     user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
-    correct_answers = models.IntegerField(default=0)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='quiz_takers')
+    correct_answers = models.CharField(max_length=4)
+    correct_answers_percent = models.IntegerField()
 
     def __str__(self):
         return self.user.username

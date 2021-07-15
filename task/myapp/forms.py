@@ -41,6 +41,8 @@ class CommentCreateForm(forms.ModelForm):
 class OrderingQuizGetForm(forms.Form):
     ordering_data = forms.BooleanField(required=False)
 
+class OrderingQuizPassing(forms.Form):
+    filter_passing = forms.BooleanField(required=False)
 
 class QuizCreateFormSet(forms.Form):
     

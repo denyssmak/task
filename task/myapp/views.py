@@ -12,7 +12,8 @@ from .forms import (
     CommentCreateForm, 
     OrderingQuizGetForm, 
     QuizCreateFormSet,
-    AnswerFormSet
+    AnswerFormSet,
+    OrderingQuizPassing
 )
 from django.views.generic import CreateView, ListView, DetailView, UpdateView
 from django.db.models import Avg, Q
@@ -47,16 +48,6 @@ class MainView(ListView):
     template_name = 'index.html'
 
 
-# class CreateTestView(CreateView):
-#     model = Quiz
-#     form_class = CreateTestForm
-#     template_name = 'createtest.html'
-#     success_url = reverse_lazy('index')
-
-#     def form_valid(self, form):
-#         object = form.save(commit=False)
-#         object.user = self.request.user
-#         return super().form_valid(form=form)
 
 def CreateTestView(request, **kwargs):
     QuizCreateFormSet = inlineformset_factory(
@@ -120,50 +111,14 @@ def CreateTestView(request, **kwargs):
             'formset': formset 
         }
     )
-    # if request.method == 'POST':
-    #     # import pdb
-    #     # pdb.set_trace()
-    #     title = request.POST.get('title')
-    #     description = request.POST.get('description')
-    #     form = CreateTestForm({'title': title, 'description': description})
-    #     if form.is_valid():
-    #         quiz = form.save()
-    #         questions = []
-    #         for i in range(5):
-    #             title_question = request.POST.get(f'question_set-{i}-title_question')
-    #             questions.append(models.Question(quiz=quiz, title_question=title_question))
-    #             one_answer = request.POST.get('answer_set-0-text')[i]
-    #             two_answer = request.POST.get('answer_set-1-text')[i]
-    #             three_answer = request.POST.get('answer_set-2-text')[i]
-    #             four_answer = request.POST.get('answer_set-3-text')[i]
-    #         models.Question.objects.bulk_create(questions)
-    #     test_formset_title = test_formset_title(request.POST)
-    #     formset = test_formset(request.POST)
-    #     form = CreateTestForm(request.POST)
-    #     if form.is_valid() and test_formset_title.is_valid() and formset.is_valid():
-    #         pass
-    # else:
-    #     test_formset_title = test_formset_title()
-    #     formset = test_formset()
-    #     form = CreateTestForm()
-    # return render(
-    #     request, 
-    #     "createtest.html", 
-    #     {'form': form, 
-    #     'formset': formset ,
-    #     }
-    # )
+
 class ProfileUserView(DetailView):
     model = MyUser
     template_name = 'profile.html'
     slug_url_kwarg = 'username'
     slug_field = 'username'
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     obj = kwargs['object']
-    #     context.update({'profile_form': ProfileUserForm(instance=obj)})
-    #     return context
+
 
 class ProfileUserUpdateView(UpdateView):
     model = UserProfile
@@ -183,18 +138,6 @@ class ListTestDetailView(DetailView):
     slug_field = 'title'
 
 
-# answer_formset = inlineformset_factory(
-#         models.Question,
-#         models.Answer,
-#         fields=(
-#             'correct1', 
-#             'correct2',
-#             'correct3',
-#             'correct4',
-#         ),
-#         extra=5,
-#         can_delete=False,
-# )
 
 @login_required
 def quiz_detail_passing(request, **kwargs):
@@ -206,6 +149,7 @@ def quiz_detail_passing(request, **kwargs):
         
         answers = []
         score = 0
+        score_percent = 0
         for i in range(5):
             one_correct = bool(request.POST.get(f'form-{i}-correct1'))
             two_correct = bool(request.POST.get(f'form-{i}-correct2'))
@@ -225,66 +169,33 @@ def quiz_detail_passing(request, **kwargs):
             and questions[i].correct3 == three_correct \
             and questions[i].correct4 == four_correct:
                 score += 1
+                score_percent += 1
         models.QuizTakers.objects.create(
             user=request.user,
             quiz=quiz,
             correct_answers=score,
+            correct_answers_percent=score_percent*100/5,
         )
 
         models.Answer.objects.bulk_create(answers)
         return redirect(reverse('result', args=(slug_field, )))
-        # breakpoint()
-
-        # question = models.Question.objects.get(title=data)
-
-        # if question.correct1 and question.correct2 and question.correct3 and question.correct4 is True:
-        #     return True
-        # else: 
-        #     return False
     else:
         formset = AnswerFormSet()
     return render(request, "test_passing.html", {"quiz": quiz, 'formset':formset})
 
 
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     if 'title' in self.kwargs:
-    #         title = self.kwargs['title']
-    #         quiz = models.Quiz.objects.get(title=title)
-    #         context['quiz'] = quiz
-    #     return context
-
-
-
-
-
-
-# def quiz_detail_passing(request, **kwargs):
-
-#     QuizForm = inlineformset_factory(
-#         models.Quiz, models.Question, fields=('title_question',), extra=5
-#         )
-
-#     slug_field = kwargs["title"]
-#     data = get_object_or_404(Quiz, title=slug_field)
-#     if request.method == 'POST':
-#         formset = QuizForm(request.POST, request.FIELDS)
-#         if formset.is_valid():
-#             pass
-#     else:
-#         formset = QuizForm()
-#     return render(request, "test_passing.html", {"quiz": data, 'formset':formset})
-
 class ListTestView(ListView):
     model = Quiz
     template_name = 'test_all.html'
     context_object_name = 'test'
-    extra_context = {'ordering_data': OrderingQuizGetForm}
+    extra_context = {'ordering_data': OrderingQuizGetForm, 'filter_passing':OrderingQuizPassing}
 
     def get_queryset(self):
         if 'ordering_data' in self.request.GET:
             return Quiz.objects.order_by('-created_at')
+        if 'filter_passing' in self.request.GET:
+            return Quiz.objects.filter(Q(quiz_takers=True))
         return Quiz.objects.order_by('created_at')
 
 class CommentCreateView(CreateView):

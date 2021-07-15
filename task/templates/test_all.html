@@ -10,6 +10,13 @@
 <input type="submit" value="OK">
 <input type="hidden" value="hidden">
 {% endfor %}
+{% for filter_passing in filter_passing %}
+
+<form method="get">
+  <div>{{filter_passing}} Cортировка по пройденым
+<input type="submit" value="OK">
+<input type="hidden" value="hidden">
+{% endfor %}
 {% for test in test %}
   <br>
   <a href="{% url 'test' test.title %}">{{test.title}}</a>
