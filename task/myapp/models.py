@@ -49,7 +49,8 @@ class UserProfile(models.Model):
 
 
 class Quiz(models.Model):
-    title = models.CharField(max_length=60)
+
+    title = models.CharField(max_length=60, unique=True)
     description = models.CharField(max_length=100)
     created_at = models.DateField(auto_now=True, blank=True)
 
@@ -88,13 +89,14 @@ class Answer(models.Model):
 
 
 class QuizTakers(models.Model):
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(MyUser, on_delete=models.CASCADE, related_name='quiz_user_takers')
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='quiz_takers')
     correct_answers = models.CharField(max_length=4)
     correct_answers_percent = models.IntegerField()
 
     def __str__(self):
         return self.user.username
+
 
 class Response(models.Model):
     quiztaker = models.ForeignKey(QuizTakers, on_delete=models.CASCADE)

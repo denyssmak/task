@@ -2,7 +2,7 @@
 {% block content %}
 {% if request.user.is_authenticated %}
 <br>
-Avatar: <img src="{{user.profiles.photo}}" width="90px" height="90px"><br>
+Avatar: <img src="{{user.profiles.photo.url}}" width="90px" height="90px"><br>
 <br>
 Info: {{user.profiles}}
 	<h2>{{ user }}</h2>

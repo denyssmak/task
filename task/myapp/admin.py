@@ -4,6 +4,7 @@ from .models import MyUser, UserProfile, Quiz, Question, Answer, Response, QuizT
 
 import nested_admin
 
+
 class AnswerInline(nested_admin.NestedTabularInline):
     model = Answer
     extra = 4
@@ -32,7 +33,11 @@ class QuizTakersAdmin(admin.ModelAdmin):
     admin.site.register(Question)
     admin.site.register(Response)
 
-
+class QuizTakersInline(admin.TabularInline):
+    model = QuizTakers
+    
+class UserAdmin(UserAdmin):
+    inlines = (QuizTakersInline,)
 admin.site.register(MyUser, UserAdmin)
 admin.site.register(UserProfile)
 admin.site.register(Answer)

@@ -17,6 +17,6 @@ urlpatterns = [
     path('test/<str:title>/', ListTestDetailView.as_view(), name='test'),
     path('comment_create/<int:pk>/', CommentCreateView.as_view(), name='comment_create'),
     path('search/', SearchResultsView.as_view(), name='search_results'),
-    path('test_passing/<str:quiz__title>', quiz_detail_passing, name='test_passing'),
+    path('test_passing/<str:quiz__title>/', quiz_detail_passing, name='test_passing'),
     path('result/<str:quiz__title>', ResultQuiz.as_view(), name='result')
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

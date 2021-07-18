@@ -1,5 +1,6 @@
 {% block content %}
 {% load quiz_passing %}
+
     <h1>{{quiz.title}}<br></h1>
     <h4>{{quiz.description}}<br></h4>
     <form method="post">
@@ -15,6 +16,11 @@
             {{ quizzes.response4 }} {{ field.correct4 }}<br>
         {% endwith %}
     {% endfor %}
+    {% if messages %}
+{% for message in messages %}
+  <h2 style="color: red; left: 100%">{{ message }}</h2>
+{% endfor %}
+{% endif %}
     <button type="submit">Сomplete</button>
     <form>
 {% endblock %}

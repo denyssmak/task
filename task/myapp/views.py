@@ -21,7 +21,7 @@ from django.forms.models import inlineformset_factory
 from django.forms import formset_factory
 import operator
 from django.contrib.auth.decorators import login_required
-
+from django.contrib import messages
 
 class UserLoginView(LoginView):
     template_name = 'login.html'
@@ -143,6 +143,8 @@ class ListTestDetailView(DetailView):
 def quiz_detail_passing(request, **kwargs):
     slug_field = kwargs["quiz__title"]
     quiz = get_object_or_404(Quiz, title=slug_field)
+    if quiz.quiz_takers.filter(user=request.user).exists():
+        return redirect(reverse('index'))
     questions = quiz.question_set.all()
     if request.method == 'POST':
         formset = AnswerFormSet(request.POST)
@@ -155,6 +157,10 @@ def quiz_detail_passing(request, **kwargs):
             two_correct = bool(request.POST.get(f'form-{i}-correct2'))
             three_correct = bool(request.POST.get(f'form-{i}-correct3'))
             four_correct = bool(request.POST.get(f'form-{i}-correct4'))
+            check_list = [one_correct, two_correct, three_correct, four_correct]   
+            if check_list.count(True) != 1:
+                messages.error(request,  'Ты быканул?')
+                return redirect(reverse('test_passing', args=(slug_field, )))       
             answers.append(
                 Answer(
                     question=questions[i],
@@ -195,7 +201,7 @@ class ListTestView(ListView):
         if 'ordering_data' in self.request.GET:
             return Quiz.objects.order_by('-created_at')
         if 'filter_passing' in self.request.GET:
-            return Quiz.objects.filter(Q(quiz_takers=True))
+            return Quiz.objects.filter(quiz_takers__isnull=False)
         return Quiz.objects.order_by('created_at')
 
 class CommentCreateView(CreateView):
@@ -235,7 +241,11 @@ class ResultQuiz(DetailView):
     slug_url_kwarg = 'quiz__title'
     slug_field = 'quiz__title'
 
-
+    def get_object(self, queryset=None):
+        slug = self.kwargs["quiz__title"]
+        quiz = get_object_or_404(Quiz, title=slug)
+        obj = models.QuizTakers.objects.get(user=self.request.user, quiz=quiz)
+        return obj
 # def quiz_detail_passing(request, **kwargs):
 
 
