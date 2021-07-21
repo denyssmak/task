@@ -1,15 +1,12 @@
+{% extends 'base.html' %}
 {% block content %}
 {% load static %}
 {% load socialaccount %}
 {% load account %}
 
 {% if user.is_authenticated %}
-{{user}}
-<br>
-<a href="{% url 'profile' user.username %}">Profile</a><br>
-<a href="{% url 'logout_page' %}">Logout</a>
-<br>
-<a href="{% url 'createtest' %}">create test</a>
+
+
 {% else %}
 <a href="{% url 'login_page' %}">Login</a>
 <br>
@@ -21,6 +18,55 @@
 <br>
 {% endif %}
 <br>
-<a href="{% url 'test_all' %}">Tests</a>
+{% if user.is_authenticated %}
+     <div class="b-example-divider"></div>
 
+  <div class="container px-4 py-5" id="icon-grid">
+    <h2 class="pb-2 border-bottom">{{user}}</h2>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 py-5">
+      <div class="col d-flex align-items-start">
+        <svg class="bi text-muted flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#bootstrap"/></svg>
+        <div>
+          <h4 class="fw-bold mb-0"><a href="{% url 'index' %}">Home</a></h4>
+          <p>home page</p>
+        </div>
+      </div>
+
+      <div class="col d-flex align-items-start">
+
+        <svg class="bi text-muted flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#cpu-fill"/></svg>
+        <div>
+          <h4 class="fw-bold mb-0"><a href="{% url 'test_all' %}">Tests</a></h4>
+		<p>you can go through all the quizs</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <svg class="bi text-muted flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#calendar3"/></svg>
+        <div>
+
+          <h4 class="fw-bold mb-0"><a href="{% url 'createtest' %}">create test</a></h4>
+          <p>You can create your quizs</p>
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <svg class="bi text-muted flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#home"/></svg>
+        <div>
+        	
+          <h4 class="fw-bold mb-0"><a href="{% url 'profile' user.username %}">Profile</a></h4>
+
+        </div>
+      </div>
+      <div class="col d-flex align-items-start">
+        <svg class="bi text-muted flex-shrink-0 me-3" width="1.75em" height="1.75em"><use xlink:href="#speedometer2"/></svg>
+        <div>
+          <h4 class="fw-bold mb-0"><a href="{% url 'logout_page' %}">Logout</a></h4>
+
+        </div>
+      </div>
+
+      </div>
+    </div>
+  </div>
+{% endif %}
 {% endblock %}

@@ -17,9 +17,10 @@
 <input type="submit" value="OK">
 <input type="hidden" value="hidden">
 {% endfor %}
+<br>
 {% for test in test %}
   <br>
-  <a href="{% url 'test' test.title %}">{{test.title}}</a>
+  <a href="{% url 'test' test.title %}">{{test.title}}</a><br>
 {% endfor %}
 </form>
 </div>

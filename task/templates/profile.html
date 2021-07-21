@@ -4,7 +4,9 @@
 <br>
 Avatar: <img src="{{user.profiles.photo.url}}" width="90px" height="90px"><br>
 <br>
-Info: {{user.profiles}}
+surname : {{user.profiles.surname}}<br>
+Date of Birth : {{user.profiles.date|default_if_none:''}}<br>
+Info : {{user.profiles.yourself_information}}
 	<h2>{{ user }}</h2>
 
 	<a href="{% url 'logout_page' %}">logout</a><br>
