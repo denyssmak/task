@@ -45,7 +45,7 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f'{self.user} |  surname: {self.surname} | yourself_information: {self.yourself_information} | data: {self.date}'
-    
+
 
 
 class Quiz(models.Model):
